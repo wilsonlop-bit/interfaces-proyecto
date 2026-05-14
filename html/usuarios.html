@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum_scalable=1.0, minimum-scalable=1.0">
+    <meta http-equiv="X-UA-compatible" content="IE=Edge">
+    <meta name="description" content="Pagina de Usuarios">
+    <meta name="description" content="Sistema de inventario">
+    <meta name="description" content="Tienda deportiva">
+    <meta name="author" content="Fredy Santiago">
+    <meta name="keywords" content="Página deportiva, inventario">
+    <title>Usuarios - SportStock Manager</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+
+<body>
+    <div class="container">
+
+        <aside class="sidebar dark-sidebar">
+            <div class="logo">
+                <i class="fas fa-dumbbell logo-icon"></i>
+                <div>
+                    <h2>SportStock</h2>
+                    <p class="subtitle">Manager</p>
+                </div>
+            </div>
+            <nav>
+                <a href="index.html"><i class="fas fa-th-large"></i> Dashboard</a>
+                <a href="inventario.html"><i class="fas fa-box"></i> Inventario</a>
+                <a href="usuarios.html" class="active"><i class="fas fa-users"></i> Usuarios</a>
+                <a href="Reportes.html"><i class="fas fa-file-alt"></i> Reportes</a>
+            </nav>
+            <div class="sidebar-footer">
+                <p>© 2026 SportStock Manager</p>
+                <p>Versión 1.0.0</p>
+            </div>
+        </aside>
+
+        <main class="main-content">
+
+            <header class="top-header">
+                <div class="welcome-section">
+                    <h1>Bienvenido, Fredy</h1>
+                    <p id="usuarios-fecha"></p>
+                    <p style="font-size:13px; color:#94a3b8; margin-top:4px;">Administra el equipo de SportStock Manager</p>
+                </div>
+                <div class="user-controls">
+                    <div class="notification">
+                        <i class="far fa-bell"></i>
+                        <span class="badge-num" id="notif-badge" style="display:none;">0</span>
+                    </div>
+                    <div class="user-profile">
+                        <div class="user-info">
+                            <span class="user-name">Fredy Diaz</span>
+                            <span class="user-role">Administrador</span>
+                        </div>
+                        <img src="https://ui-avatars.com/api/?name=Fredy+Diaz&background=f59e0b&color=fff" alt="Perfil" class="avatar">
+                    </div>
+                    <a href="login.html" class="btn-logout-top"><i class="fas fa-sign-out-alt"></i> Salir</a>
+                </div>
+            </header>
+
+            <!-- Barra de búsqueda + botón -->
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; gap:15px;">
+                <div class="filters-bar" style="flex:1; margin-bottom:0;">
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="buscador-usuarios" placeholder="Buscar usuarios por nombre o correo...">
+                    </div>
+                </div>
+                <button class="btn-add" onclick="abrirModal()">
+                    <i class="fas fa-plus"></i> Crear Usuario
+                </button>
+            </div>
+
+            <!-- Tabla -->
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Usuario</th>
+                            <th>Correo Electrónico</th>
+                            <th>Rol</th>
+                            <th>Estado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabla-usuarios"></tbody>
+                </table>
+                <div class="inventory-footer">
+                    <span id="texto-mostrando-usuarios">Mostrando 0 usuarios</span>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- MODAL CREAR / EDITAR USUARIO -->
+    <div class="modal" id="modalUsuario">
+        <div class="modal-content">
+            <h2 id="modalTituloUsuario">Crear Usuario</h2>
+            <form id="formUsuario">
+                <input type="hidden" id="usuarioId">
+
+                <div class="form-group">
+                    <label>Nombre completo</label>
+                    <input type="text" id="uNombre" placeholder="Ej: Ana Rodríguez" required>
+                </div>
+                <div class="form-group">
+                    <label>Correo electrónico</label>
+                    <input type="email" id="uCorreo" placeholder="Ej: ana@sportstock.com" required>
+                </div>
+                <div class="form-group">
+                    <label>Rol</label>
+                    <select id="uRol" class="filter-select" style="width:100%;">
+                        <option value="Administrador">Administrador</option>
+                        <option value="Empleado">Empleado</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Estado</label>
+                    <select id="uEstado" class="filter-select" style="width:100%;">
+                        <option value="Activo">Activo</option>
+                        <option value="Inactivo">Inactivo</option>
+                    </select>
+                </div>
+
+                <div class="modal-actions">
+                    <button type="button" class="btn-cancelar" onclick="cerrarModal()">Cancelar</button>
+                    <button type="submit" class="btn-guardar">Guardar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="../js/usuarios.js"></script>
+</body>
+</html>

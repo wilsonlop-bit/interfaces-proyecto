@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link rel="shortcut icon" href="img/icon.png" type="image/png" sizes="16x16">
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <title>Dashboard - SportStock</title>
+</head>
+
+<body>
+
+    <div class="container">
+
+        <aside class="sidebar dark-sidebar">
+            <div class="logo">
+                <i class="fas fa-dumbbell logo-icon"></i>
+                <div>
+                    <h2>SportStock</h2>
+                    <p class="subtitle">Manager</p>
+                </div>
+            </div>
+
+            <nav>
+                <a href="index.html" class="active"><i class="fas fa-th-large"></i> Dashboard</a>
+                <a href="inventario.html"><i class="fas fa-box"></i> Inventario</a>
+                <a href="usuarios.html"><i class="fas fa-users"></i> Usuarios</a>
+                <a href="Reportes.html"><i class="fas fa-file-alt"></i> Reportes</a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <p>© 2026 SportStock Manager</p>
+                <p>Versión 1.0.0</p>
+            </div>
+        </aside>
+
+        <main class="main-content dashboard-bg">
+
+            <header class="top-header">
+                <div class="welcome-section">
+                    <h1>Bienvenido, Fredy</h1>
+                    <p id="dash-fecha"></p>
+                </div>
+
+                <div class="user-controls">
+                    <div class="notification">
+                        <i class="far fa-bell"></i>
+                    </div>
+                    <div class="user-profile">
+                        <div class="user-info">
+                            <span class="user-name">Fredy Diaz</span>
+                            <span class="user-role">Administrador</span>
+                        </div>
+                        <img src="https://ui-avatars.com/api/?name=Fredy+Diaz&background=f59e0b&color=fff" alt="Perfil"
+                            class="avatar">
+                    </div>
+                    <a href="login.html" class="btn-logout-top"><i class="fas fa-sign-out-alt"></i> Salir</a>
+                </div>
+            </header>
+
+            <div class="dashboard-cards">
+                <div class="stat-card">
+                    <div class="stat-info">
+                        <h3>Total Productos</h3>
+                        <h2 id="dash-total-productos">0</h2>
+                        <p class="trend up">+12% vs mes anterior</p>
+                    </div>
+                    <div class="stat-icon blue-icon"><i class="fas fa-cube"></i></div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-info">
+                        <h3>Productos Bajos en Stock</h3>
+                        <h2 id="dash-bajos-stock">0</h2>
+                        <p class="trend neutral">Requieren atención</p>
+                    </div>
+                    <div class="stat-icon red-icon"><i class="fas fa-exclamation"></i></div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-info">
+                        <h3>Ventas Recientes</h3>
+                        <h2>342</h2>
+                        <p class="trend neutral">Últimos 7 días</p>
+                    </div>
+                    <div class="stat-icon green-icon"><i class="fas fa-shopping-cart"></i></div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-info">
+                        <h3>Valor Total Inventario</h3>
+                        <h2 id="dash-valor-total">$0</h2>
+                        <p class="trend up">+8% este mes</p>
+                    </div>
+                    <div class="stat-icon purple-icon"><i class="fas fa-chart-line"></i></div>
+                </div>
+            </div>
+
+            <div class="dashboard-grid">
+
+                <div class="dashboard-panel">
+                    <h3 class="panel-title">Actividad Reciente</h3>
+                    <div class="list-container" id="dash-actividad-reciente">
+                    </div>
+                </div>
+
+                <div class="dashboard-panel panel-alert">
+                    <h3 class="panel-title"><i class="fas fa-exclamation-circle text-red"></i> Alerta de Stock Bajo</h3>
+                    <div class="list-container" id="dash-alertas-stock">
+                    </div>
+                </div>
+
+            </div>
+
+        </main>
+    </div>
+
+    <script src="../js/dashboard.js"></script>
+</body>
+
+</html>

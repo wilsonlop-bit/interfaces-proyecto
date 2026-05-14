@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, user-scalable=no, maximum_scalable=1.0, minimum-scalable=1.0">
+    <meta http-equiv="X-UA-compatible" content="IE=Edge">
+    <meta name="description" content="Pagina de Inventario">
+    <meta name="description" content="Sistema de inventario">
+    <meta name="description" content="Tienda deportiva">
+    <meta name="author" content="Fredy Santiago">
+    <meta name="keywords" content="Página deportiva, inventario">
+    <title>Inventario - SportStock Manager</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+
+<body>
+    <div class="container">
+
+        <aside class="sidebar">
+            <div class="logo">
+                <i class="fas fa-dumbbell logo-icon"></i>
+                <div>
+                    <h2>SportStock</h2>
+                    <p class="subtitle">Manager</p>
+                </div>
+            </div>
+
+            <nav>
+                <a href="index.html"><i class="fas fa-th-large"></i> Dashboard</a>
+                <a href="inventario.html" class="active"><i class="fas fa-box"></i> Inventario</a>
+                <a href="usuarios.html"><i class="fas fa-users"></i> Usuarios</a>
+                <a href="Reportes.html"><i class="fas fa-file-alt"></i> Reportes</a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <p>© 2026 SportStock Manager<br>Versión 1.0.0</p>
+            </div>
+        </aside>
+
+        <main class="main-content">
+
+            <header class="top-header">
+                <div class="welcome-section">
+                    <h1>Bienvenido, Fredy</h1>
+                    <p id="dash-fecha"></p>
+                </div>
+                <div class="user-controls">
+                    <div class="notification">
+                        <i class="far fa-bell"></i>
+                    </div>
+                    <div class="user-profile">
+                        <div class="user-info">
+                            <span class="user-name">Fredy Diaz</span>
+                            <span class="user-role">Administrador</span>
+                        </div>
+                        <img src="https://ui-avatars.com/api/?name=Fredy+Diaz&background=f59e0b&color=fff" alt="Avatar"
+                            class="avatar">
+                    </div>
+                    <a href="login.html" class="btn-logout-top"><i class="fas fa-sign-out-alt"></i> Salir</a>
+                </div>
+            </header>
+
+            <div class="filters-bar">
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="Buscar productos o marcas...">
+                </div>
+                <select class="filter-select">
+                    <option>Todos los deportes</option>
+                    <option>Fútbol</option>
+                    <option>Baloncesto</option>
+                    <option>Tenis</option>
+                </select>
+                <button class="btn-add" onclick="abrirModal()">
+                    <i class="fas fa-plus"></i> Nuevo Producto
+                </button>
+            </div>
+
+            <div id="modalProducto" class="modal" style="display: none;">
+                <div class="modal-content">
+                    <h2 id="modalTitulo">Agregar Nuevo Producto</h2>
+
+                    <form id="formProducto">
+                        <input type="hidden" id="productoId">
+
+                        <div class="form-group">
+                            <label for="nombre">Nombre del producto</label>
+                            <input type="text" id="nombre" placeholder="Ej: Balón Molten V5M5000" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="deporte">Deporte</label>
+                            <input type="text" id="deporte" placeholder="Ej: Voleibol" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="categoria">Categoría</label>
+                            <select id="categoria" required>
+                                <option value="" disabled selected>Selecciona una categoría...</option>
+                                <option value="Balones">Balones</option>
+                                <option value="Ropa Deportiva">Ropa Deportiva</option>
+                                <option value="Calzado">Calzado</option>
+                                <option value="Equipamiento Médico">Equipamiento Médico</option>
+                                <option value="Accesorios">Accesorios</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="marca">Marca</label>
+                            <input type="text" id="marca" placeholder="Ej: Molten" required>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group half-width">
+                                <label for="precio">Precio </label>
+                                <input type="number" id="precio" step="0.01" placeholder="0.00" required>
+                            </div>
+
+                            <div class="form-group half-width">
+                                <label for="stock">Stock inicial</label>
+                                <input type="number" id="stock" placeholder="0" required>
+                            </div>
+                        </div>
+
+                        <div class="modal-actions">
+                            <button type="button" class="btn-cancelar" onclick="cerrarModal()">Cancelar</button>
+                            <button type="submit" class="btn-guardar">Guardar Producto</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>NOMBRE DEL PRODUCTO</th>
+                            <th>DEPORTE</th>
+                            <th>CATEGORÍA</th>
+                            <th>MARCA</th>
+                            <th>PRECIO</th>
+                            <th>STOCK</th>
+                            <th>ACCIONES</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabla-productos">
+                    </tbody>
+                </table>
+
+                <p id="texto-mostrando">Mostrando 0 productos</p>
+
+            </div>
+
+        </main>
+    </div>
+    <script src="../js/inventario.js"></script>
+</body>
+
+</html>
