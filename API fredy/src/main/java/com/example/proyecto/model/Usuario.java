@@ -5,15 +5,17 @@ public class Usuario {
     private Long id;
     private String nombreCompleto;
     private String nombreUsuario;
+    private String password;
     private String rol;
     private String estado;
 
     public Usuario() {}
 
-    public Usuario(Long id, String nombreCompleto, String nombreUsuario, String rol, String estado) {
+    public Usuario(Long id, String nombreCompleto, String nombreUsuario, String password, String rol, String estado) {
         this.id = id;
         this.nombreCompleto = nombreCompleto;
         this.nombreUsuario = nombreUsuario;
+        this.password = password;
         this.rol = rol;
         this.estado = estado;
     }
@@ -26,6 +28,9 @@ public class Usuario {
 
     public String getNombreUsuario() { return nombreUsuario; }
     public void setNombreUsuario(String nombreUsuario) { this.nombreUsuario = nombreUsuario; }
+
+    public String getPassword() { return password; }
+    public void setPassword(String password) { this.password = password; }
 
     public String getRol() { return rol; }
     public void setRol(String rol) { this.rol = rol; }

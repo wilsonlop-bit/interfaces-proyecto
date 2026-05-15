@@ -3,23 +3,18 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum_scalable=1.0, minimum-scalable=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-compatible" content="IE=Edge">
-    <meta name="description" content="Pagina de Reportes">
-    <meta name="description" content="Sistema de inventario">
-    <meta name="description" content="Tienda deportiva">
     <meta name="author" content="Fredy Santiago">
-    <meta name="keywords" content="Página deportiva, inventario">
     <title>Reportes - SportStock Manager</title>
     <link rel="stylesheet" href="../css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    
 </head>
 
 <body>
     <div class="container">
 
-        <aside class="sidebar">
+        <aside class="sidebar dark-sidebar">
             <div class="logo">
                 <i class="fas fa-dumbbell logo-icon"></i>
                 <div>
@@ -31,7 +26,7 @@
                 <a href="index.html"><i class="fas fa-th-large"></i> Dashboard</a>
                 <a href="inventario.html"><i class="fas fa-box"></i> Inventario</a>
                 <a href="usuarios.html"><i class="fas fa-users"></i> Usuarios</a>
-                <a href="reportes.html" class="active"><i class="fas fa-file-alt"></i> Reportes</a>
+                <a href="Reportes.html" class="active"><i class="fas fa-file-alt"></i> Reportes</a>
             </nav>
             <div class="sidebar-footer">
                 <p>© 2026 SportStock Manager</p>
@@ -43,7 +38,7 @@
 
             <header class="top-header">
                 <div class="welcome-section">
-                    <h1>Bienvenido, Fredy</h1>
+                    <h1>Bienvenido, <span id="saludo-nombre">...</span></h1>
                     <p id="reportes-fecha"></p>
                     <p style="font-size:13px; color:#94a3b8; margin-top:4px;">Genera y descarga reportes del sistema</p>
                 </div>
@@ -53,12 +48,17 @@
                     </div>
                     <div class="user-profile">
                         <div class="user-info">
-                            <span class="user-name">Fredy Diaz</span>
-                            <span class="user-role">Administrador</span>
+                            <span class="user-name" id="sesion-nombre">Cargando...</span>
+                            <span class="user-role" id="sesion-rol"></span>
                         </div>
-                        <img src="https://ui-avatars.com/api/?name=Fredy+Diaz&background=f59e0b&color=fff" alt="Avatar" class="avatar">
+                        <div id="sesion-avatar"
+                            style="width:38px; height:38px; border-radius:50%; background:#f59e0b;
+                                   color:white; display:flex; align-items:center; justify-content:center;
+                                   font-weight:700; font-size:14px;">?</div>
                     </div>
-                    <a href="login.html" class="btn-logout-top"><i class="fas fa-sign-out-alt"></i> Salir</a>
+                    <a href="login.html" onclick="cerrarSesion(event)" class="btn-logout-top">
+                        <i class="fas fa-sign-out-alt"></i> Salir
+                    </a>
                 </div>
             </header>
 
@@ -91,7 +91,7 @@
 
                 <div class="reporte-card">
                     <div class="reporte-card-icon icon-red">
-                        <i class="fas fa-calendar-times"></i>
+                        <i class="fas fa-exclamation-triangle"></i>
                     </div>
                     <h3>Reporte de Stock Bajo</h3>
                     <p>Productos que requieren reabastecimiento</p>
@@ -103,18 +103,18 @@
 
             </div>
 
-            <!-- Próximamente -->
-            <div class="proximamente-box">
-                <h3>Funcionalidad próximamente disponible</h3>
-                <p>Los reportes detallados estarán disponibles cuando conectes la aplicación a una base de datos. Esta funcionalidad incluirá gráficos interactivos, exportación a múltiples formatos y análisis avanzados.</p>
-            </div>
-
-        </main>
+           
     </div>
 
-    <!-- jsPDF desde CDN -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
     <script src="../js/reportes.js"></script>
+    <script>
+        function cerrarSesion(e) {
+            e.preventDefault();
+            sessionStorage.removeItem("usuarioActivo");
+            window.location.href = "login.html";
+        }
+    </script>
 </body>
 </html>

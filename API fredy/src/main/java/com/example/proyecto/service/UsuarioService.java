@@ -17,11 +17,7 @@ public class UsuarioService {
 
     @PostConstruct
     public void inicializarDatos() {
-        if (repository.count() == 0) {
-            repository.save(new Usuario(null, "Juan Pérez", "juanperez", "Administrador", "Activo"));
-            repository.save(new Usuario(null, "María González", "mariagonzalez", "Empleado", "Activo"));
-            repository.save(new Usuario(null, "Carlos Rodríguez", "carlosrod", "Empleado", "Activo"));
-        }
+
     }
 
     public List<UsuarioDTO> obtenerTodos() {
@@ -33,7 +29,14 @@ public class UsuarioService {
     }
 
     public UsuarioDTO crear(UsuarioDTO dto) {
-        Usuario usuario = new Usuario(null, dto.getNombreCompleto(), dto.getNombreUsuario(), dto.getRol(), dto.getEstado());
+        Usuario usuario = new Usuario(
+                null,
+                dto.getNombreCompleto(),
+                dto.getNombreUsuario(),
+                dto.getPassword(),
+                dto.getRol() != null ? dto.getRol() : "Empleado",
+                dto.getEstado() != null ? dto.getEstado() : "Activo"
+        );
         return mapToDTO(repository.save(usuario));
     }
 
@@ -41,6 +44,9 @@ public class UsuarioService {
         Usuario usuario = repository.findById(id).orElseThrow();
         usuario.setNombreCompleto(dto.getNombreCompleto());
         usuario.setNombreUsuario(dto.getNombreUsuario());
+        if (dto.getPassword() != null && !dto.getPassword().isEmpty()) {
+            usuario.setPassword(dto.getPassword());
+        }
         usuario.setRol(dto.getRol());
         usuario.setEstado(dto.getEstado());
         return mapToDTO(repository.save(usuario));
@@ -50,11 +56,23 @@ public class UsuarioService {
         repository.deleteById(id);
     }
 
+    // ==================== LOGIN ====================
+    // Método para autenticar usuario
+    public UsuarioDTO login(String nombreUsuario, String password) {
+        return repository.findAll().stream()
+                .filter(u -> u.getNombreUsuario().equals(nombreUsuario) && u.getPassword().equals(password))
+                .map(this::mapToDTO)
+                .findFirst()
+                .orElse(null);
+    }
+
+    // Mapeo de Usuario a UsuarioDTO
     private UsuarioDTO mapToDTO(Usuario usuario) {
         UsuarioDTO dto = new UsuarioDTO();
         dto.setId(usuario.getId());
         dto.setNombreCompleto(usuario.getNombreCompleto());
         dto.setNombreUsuario(usuario.getNombreUsuario());
+        dto.setPassword(usuario.getPassword());
         dto.setRol(usuario.getRol());
         dto.setEstado(usuario.getEstado());
         return dto;

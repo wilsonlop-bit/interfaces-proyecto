@@ -71,8 +71,11 @@
                 <select class="filter-select">
                     <option>Todos los deportes</option>
                     <option>Fútbol</option>
+                    <option>Voleibol</option>
                     <option>Baloncesto</option>
                     <option>Tenis</option>
+                    <option>Ciclismo</option>
+                    <option>Fitness</option>
                 </select>
                 <button class="btn-add" onclick="abrirModal()">
                     <i class="fas fa-plus"></i> Nuevo Producto
@@ -93,7 +96,16 @@
 
                         <div class="form-group">
                             <label for="deporte">Deporte</label>
-                            <input type="text" id="deporte" placeholder="Ej: Voleibol" required>
+                            <select id="deporte" required>
+                                <option value="" disabled selected>Selecciona un deporte...</option>
+                                <option value="Fútbol">Fútbol</option>
+                                <option value="Voleibol">Voleibol</option>
+                                <option value="Baloncesto">Baloncesto</option>
+                                <option value="Tenis">Tenis</option>
+                                <option value="Ciclismo">Ciclismo</option>
+                                <option value="Fitness">Fitness</option>
+                                <option value="Badminton">Badminton</option>
+                            </select>
                         </div>
 
                         <div class="form-group">
@@ -101,9 +113,12 @@
                             <select id="categoria" required>
                                 <option value="" disabled selected>Selecciona una categoría...</option>
                                 <option value="Balones">Balones</option>
-                                <option value="Ropa Deportiva">Ropa Deportiva</option>
                                 <option value="Calzado">Calzado</option>
-                                <option value="Equipamiento Médico">Equipamiento Médico</option>
+                                <option value="Raquetas">Raquetas</option>
+                                <option value="Protección">Protección</option>
+                                <option value="Equipamiento">Equipamiento</option>
+                                <option value="Indumentaria">Indumentaria</option>
+                                <option value="Pesas">Pesas</option>
                                 <option value="Accesorios">Accesorios</option>
                             </select>
                         </div>
@@ -115,12 +130,12 @@
 
                         <div class="form-row">
                             <div class="form-group half-width">
-                                <label for="precio">Precio </label>
+                                <label for="precio">Precio</label>
                                 <input type="number" id="precio" step="0.01" placeholder="0.00" required>
                             </div>
 
                             <div class="form-group half-width">
-                                <label for="stock">Stock inicial</label>
+                                <label for="stock">Stock</label>
                                 <input type="number" id="stock" placeholder="0" required>
                             </div>
                         </div>
@@ -132,6 +147,7 @@
                     </form>
                 </div>
             </div>
+
             <div class="table-container">
                 <table>
                     <thead>

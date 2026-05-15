@@ -3,13 +3,9 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum_scalable=1.0, minimum-scalable=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-compatible" content="IE=Edge">
-    <meta name="description" content="Pagina de Usuarios">
-    <meta name="description" content="Sistema de inventario">
-    <meta name="description" content="Tienda deportiva">
     <meta name="author" content="Fredy Santiago">
-    <meta name="keywords" content="Página deportiva, inventario">
     <title>Usuarios - SportStock Manager</title>
     <link rel="stylesheet" href="../css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
@@ -42,35 +38,45 @@
 
             <header class="top-header">
                 <div class="welcome-section">
-                    <h1>Bienvenido, Fredy</h1>
+                    <h1>Bienvenido, <span id="saludo-nombre">...</span></h1>
                     <p id="usuarios-fecha"></p>
                     <p style="font-size:13px; color:#94a3b8; margin-top:4px;">Administra el equipo de SportStock Manager</p>
                 </div>
                 <div class="user-controls">
                     <div class="notification">
                         <i class="far fa-bell"></i>
-                        <span class="badge-num" id="notif-badge" style="display:none;">0</span>
                     </div>
                     <div class="user-profile">
                         <div class="user-info">
-                            <span class="user-name">Fredy Diaz</span>
-                            <span class="user-role">Administrador</span>
+                            <span class="user-name" id="sesion-nombre">Cargando...</span>
+                            <span class="user-role" id="sesion-rol"></span>
                         </div>
-                        <img src="https://ui-avatars.com/api/?name=Fredy+Diaz&background=f59e0b&color=fff" alt="Perfil" class="avatar">
+                        <div id="sesion-avatar"
+                            style="width:38px; height:38px; border-radius:50%; background:#f59e0b;
+                                   color:white; display:flex; align-items:center; justify-content:center;
+                                   font-weight:700; font-size:14px;">?</div>
                     </div>
-                    <a href="login.html" class="btn-logout-top"><i class="fas fa-sign-out-alt"></i> Salir</a>
+                    <a href="login.html" onclick="cerrarSesion(event)" class="btn-logout-top">
+                        <i class="fas fa-sign-out-alt"></i> Salir
+                    </a>
                 </div>
             </header>
 
-            <!-- Barra de búsqueda + botón -->
+            <!-- Alerta para empleados -->
+            <div id="alert-empleado" style="display:none; background:#fef3c7; border:1px solid #fcd34d;
+                 color:#92400e; padding:12px 16px; border-radius:8px; margin-bottom:20px; font-size:14px;">
+                <i class="fas fa-info-circle"></i> Solo los Administradores pueden crear, editar o eliminar usuarios.
+            </div>
+
+            <!-- Barra búsqueda + botón (botón solo para admin) -->
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; gap:15px;">
                 <div class="filters-bar" style="flex:1; margin-bottom:0;">
                     <div class="search-box">
                         <i class="fas fa-search"></i>
-                        <input type="text" id="buscador-usuarios" placeholder="Buscar usuarios por nombre o correo...">
+                        <input type="text" id="buscador-usuarios" placeholder="Buscar usuarios por nombre...">
                     </div>
                 </div>
-                <button class="btn-add" onclick="abrirModal()">
+                <button class="btn-add" id="btn-crear-usuario" onclick="abrirModal()" style="display:none;">
                     <i class="fas fa-plus"></i> Crear Usuario
                 </button>
             </div>
@@ -81,10 +87,9 @@
                     <thead>
                         <tr>
                             <th>Usuario</th>
-                            <th>Correo Electrónico</th>
                             <th>Rol</th>
                             <th>Estado</th>
-                            <th>Acciones</th>
+                            <th id="th-acciones" style="display:none;">Acciones</th>
                         </tr>
                     </thead>
                     <tbody id="tabla-usuarios"></tbody>
@@ -97,36 +102,34 @@
         </main>
     </div>
 
-    <!-- MODAL CREAR / EDITAR USUARIO -->
-    <div class="modal" id="modalUsuario">
+    <!-- MODAL (solo admin llega aquí) -->
+    <div class="modal" id="modalUsuario" style="display:none;">
         <div class="modal-content">
             <h2 id="modalTituloUsuario">Crear Usuario</h2>
             <form id="formUsuario">
                 <input type="hidden" id="usuarioId">
-
                 <div class="form-group">
                     <label>Nombre completo</label>
                     <input type="text" id="uNombre" placeholder="Ej: Ana Rodríguez" required>
                 </div>
                 <div class="form-group">
-                    <label>Correo electrónico</label>
-                    <input type="email" id="uCorreo" placeholder="Ej: ana@sportstock.com" required>
+                    <label>Usuario</label>
+                    <input type="text" id="uCorreo" placeholder="Ej: anarodriguez" required>
                 </div>
                 <div class="form-group">
                     <label>Rol</label>
-                    <select id="uRol" class="filter-select" style="width:100%;">
+                    <select id="uRol" style="width:100%;">
                         <option value="Administrador">Administrador</option>
                         <option value="Empleado">Empleado</option>
                     </select>
                 </div>
                 <div class="form-group">
                     <label>Estado</label>
-                    <select id="uEstado" class="filter-select" style="width:100%;">
+                    <select id="uEstado" style="width:100%;">
                         <option value="Activo">Activo</option>
                         <option value="Inactivo">Inactivo</option>
                     </select>
                 </div>
-
                 <div class="modal-actions">
                     <button type="button" class="btn-cancelar" onclick="cerrarModal()">Cancelar</button>
                     <button type="submit" class="btn-guardar">Guardar</button>
@@ -135,6 +138,13 @@
         </div>
     </div>
 
-    <script src="../js/usuarios.js"></script>
+    <script src="../js/Usuarios.js"></script>
+    <script>
+        function cerrarSesion(e) {
+            e.preventDefault();
+            sessionStorage.removeItem("usuarioActivo");
+            window.location.href = "login.html";
+        }
+    </script>
 </body>
 </html>

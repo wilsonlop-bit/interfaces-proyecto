@@ -1063,3 +1063,75 @@ body {
   line-height: 1.6;
   margin: 0;
 }
+
+.mensaje-alert {
+  padding: 12px 15px;
+  border-radius: 8px;
+  margin-bottom: 15px;
+  display: none;
+  font-size: 14px;
+  font-weight: 500;
+  animation: slideDown 0.3s ease-out;
+}
+
+.mensaje-alert.error {
+  background-color: #fee2e2;
+  color: #991b1b;
+  border: 1px solid #fca5a5;
+  display: block;
+}
+
+.mensaje-alert.exito {
+  background-color: #dcfce7;
+  color: #166534;
+  border: 1px solid #86efac;
+  display: block;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.btn-login:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.requisitos {
+  margin: -8px 0 12px 0;
+  padding: 10px 14px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  display: none;
+}
+
+.requisito {
+  font-size: 12px;
+  margin: 4px 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #94a3b8;
+  transition: color 0.2s;
+}
+
+.requisito.cumple {
+  color: #10b981;
+}
+
+.requisito.falla {
+  color: #ef4444;
+}
+
+.requisito i {
+  width: 14px;
+}

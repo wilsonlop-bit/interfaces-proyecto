@@ -3,15 +3,13 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport"
-        content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0, minimum-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-compatible" content="IE=Edge">
-    <meta name="description" content="Sistema de inventario">
     <meta name="author" content="Fredy Santiago">
-    <link rel="shortcut icon" href="img/icon.png" type="image/png" sizes="16x16">
-    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="../css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <title>SportStock Manager - Acceso</title>
+
 </head>
 
 <body>
@@ -26,16 +24,19 @@
         <div class="login-right">
             <div class="login-form-container">
 
+                <!-- ===== LOGIN ===== -->
                 <div id="caja-login">
                     <h2>Iniciar Sesión</h2>
                     <p class="login-subtitle">Ingresa tus credenciales para continuar</p>
 
-                    <form id="form-login">
+                    <div id="msg-login" class="mensaje-alert"></div>
+
+                    <form id="form-login" onsubmit="realizarLogin(event)">
                         <div class="input-group">
-                            <label>Correo electrónico</label>
+                            <label>Usuario</label>
                             <div class="input-with-icon">
-                                <i class="far fa-envelope"></i>
-                                <input type="email" id="login-usuario" placeholder="correo@ejemplo.com" required>
+                                <i class="far fa-user"></i>
+                                <input type="text" id="login-usuario" placeholder="Ej: juanperez" required>
                             </div>
                         </div>
 
@@ -46,38 +47,39 @@
                                 <input type="password" id="login-password" placeholder="••••••••" required>
                             </div>
                             <div class="forgot-password-container">
-                                <a href="#" onclick="mostrarFormulario('caja-recuperar', event)"
-                                    class="forgot-password">¿Olvidaste tu contraseña?</a>
+                                <a href="#" onclick="mostrarFormulario('caja-recuperar', event)" class="forgot-password">¿Olvidaste tu contraseña?</a>
                             </div>
                         </div>
 
-                        <button type="submit" class="btn-login">Iniciar Sesión</button>
+                        <button type="submit" class="btn-login" id="btn-login">Iniciar Sesión</button>
 
                         <div class="register-container">
-                            <p>¿No tienes una cuenta? <a href="#" onclick="mostrarFormulario('caja-registro', event)"
-                                    class="register-link">Regístrate aquí</a></p>
+                            <p>¿No tienes una cuenta? <a href="#" onclick="mostrarFormulario('caja-registro', event)" class="register-link">Regístrate aquí</a></p>
                         </div>
                     </form>
                 </div>
 
+                <!-- ===== REGISTRO ===== -->
                 <div id="caja-registro" style="display: none;">
                     <h2>Crear Cuenta</h2>
                     <p class="login-subtitle">Regístrate para acceder al sistema</p>
 
-                    <form id="form-registro">
+                    <div id="msg-registro" class="mensaje-alert"></div>
+
+                    <form id="form-registro" onsubmit="realizarRegistro(event)">
                         <div class="input-group">
                             <label>Nombre Completo</label>
                             <div class="input-with-icon">
                                 <i class="far fa-user"></i>
-                                <input type="text" id="reg-nombre" placeholder="Ingresa tu nombre" required>
+                                <input type="text" id="reg-nombre" placeholder="Ej: Juan Pérez" required>
                             </div>
                         </div>
 
                         <div class="input-group">
-                            <label>Correo electrónico</label>
+                            <label>Usuario</label>
                             <div class="input-with-icon">
-                                <i class="far fa-envelope"></i>
-                                <input type="email" id="reg-usuario" placeholder="correo@ejemplo.com" required>
+                                <i class="far fa-user-circle"></i>
+                                <input type="text" id="reg-usuario" placeholder="Ej: juanperez" required>
                             </div>
                         </div>
 
@@ -85,37 +87,54 @@
                             <label>Contraseña</label>
                             <div class="input-with-icon">
                                 <i class="fas fa-lock"></i>
-                                <input type="password" id="reg-password" placeholder="••••••••" required minlength="6">
+                                <input type="password" id="reg-password" placeholder="Crea una contraseña segura" required oninput="validarRequisitos()" onfocus="mostrarRequisitos()" onblur="ocultarRequisitos()">
                             </div>
                         </div>
 
-                        <button type="submit" class="btn-login">Registrarme</button>
+                        <!-- Requisitos de contraseña -->
+                        <div class="requisitos" id="requisitos-box">
+                            <div class="requisito" id="req-minimo">
+                                <i class="fas fa-circle"></i> Mínimo 6 caracteres
+                            </div>
+                            <div class="requisito" id="req-mayuscula">
+                                <i class="fas fa-circle"></i> Al menos una mayúscula (A-Z)
+                            </div>
+                            <div class="requisito" id="req-numero">
+                                <i class="fas fa-circle"></i> Al menos un número (0-9)
+                            </div>
+                            <div class="requisito" id="req-especial">
+                                <i class="fas fa-circle"></i> Al menos un carácter especial (@#$!%*?)
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn-login" id="btn-registro">Registrarme</button>
 
                         <div class="register-container">
-                            <p>¿Ya tienes una cuenta? <a href="#" onclick="mostrarFormulario('caja-login', event)"
-                                    class="register-link">Inicia sesión aquí</a></p>
+                            <p>¿Ya tienes una cuenta? <a href="#" onclick="mostrarFormulario('caja-login', event)" class="register-link">Inicia sesión aquí</a></p>
                         </div>
                     </form>
                 </div>
 
+                <!-- ===== RECUPERAR ===== -->
                 <div id="caja-recuperar" style="display: none;">
                     <h2>Recuperar Contraseña</h2>
-                    <p class="login-subtitle">Ingresa tu correo para recuperar tu acceso</p>
+                    <p class="login-subtitle">Ingresa tu usuario para contactarte</p>
+
+                    <div id="msg-recuperar" class="mensaje-alert"></div>
 
                     <form id="form-recuperar">
                         <div class="input-group">
-                            <label>Correo electrónico</label>
+                            <label>Usuario</label>
                             <div class="input-with-icon">
-                                <i class="far fa-envelope"></i>
-                                <input type="email" id="rec-correo" placeholder="correo@ejemplo.com" required>
+                                <i class="far fa-user"></i>
+                                <input type="text" id="rec-usuario" placeholder="Ej: juanperez" required>
                             </div>
                         </div>
 
-                        <button type="submit" class="btn-login" style="margin-top: 15px;">Mostrar Contraseña</button>
+                        <button type="button" onclick="recuperarPassword()" class="btn-login" style="margin-top: 15px;">Enviar Solicitud</button>
 
                         <div class="register-container" style="margin-top: 25px;">
-                            <p><a href="#" onclick="mostrarFormulario('caja-login', event)" class="register-link"><i
-                                        class="fas fa-arrow-left"></i> Volver al inicio</a></p>
+                            <p><a href="#" onclick="mostrarFormulario('caja-login', event)" class="register-link"><i class="fas fa-arrow-left"></i> Volver al inicio</a></p>
                         </div>
                     </form>
                 </div>
@@ -125,73 +144,180 @@
     </div>
 
     <script>
-        // Función maestra para cambiar entre las 3 cajas
+        const API_URL = "http://localhost:8080/api/usuarios";
+
+        // ── MOSTRAR/OCULTAR FORMULARIOS ──────────────────────────
         function mostrarFormulario(idCaja, evento) {
             evento.preventDefault();
-
-            // Ocultamos todas las cajas primero
-            document.getElementById("caja-login").style.display = "none";
-            document.getElementById("caja-registro").style.display = "none";
-            document.getElementById("caja-recuperar").style.display = "none";
-
-            // Mostramos solo la que nos pidieron
+            ["caja-login", "caja-registro", "caja-recuperar"].forEach(id => {
+                document.getElementById(id).style.display = "none";
+            });
             document.getElementById(idCaja).style.display = "block";
+            limpiarMensajes();
         }
 
-        // Lógica de REGISTRO
-        document.getElementById("form-registro").addEventListener("submit", function (e) {
-            e.preventDefault();
-            const nombre = document.getElementById("reg-nombre").value;
-            const usuario = document.getElementById("reg-usuario").value;
-            const password = document.getElementById("reg-password").value;
+        // ── MENSAJES ──────────────────────────────────────────────
+        function mostrarMensaje(elementId, texto, tipo) {
+            const el = document.getElementById(elementId);
+            el.textContent = texto;
+            el.className = "mensaje-alert " + tipo;
+        }
 
-            let usuariosGuardados = JSON.parse(localStorage.getItem("usuariosDb")) || [];
+        function limpiarMensajes() {
+            ["msg-login", "msg-registro", "msg-recuperar"].forEach(id => {
+                const el = document.getElementById(id);
+                el.textContent = "";
+                el.className = "mensaje-alert";
+            });
+        }
 
-            if (usuariosGuardados.find(u => u.usuario === usuario)) {
-                alert("Este correo ya está registrado.");
+        // ── VALIDACIÓN DE CONTRASEÑA ──────────────────────────────
+        function mostrarRequisitos() {
+            document.getElementById("requisitos-box").style.display = "block";
+        }
+
+        function ocultarRequisitos() {
+            // Solo ocultar si todos los requisitos están cumplidos
+            if (contrasenaValida()) {
+                document.getElementById("requisitos-box").style.display = "none";
+            }
+        }
+
+        function validarRequisitos() {
+            const pass = document.getElementById("reg-password").value;
+
+            const reglas = {
+                "req-minimo":    pass.length >= 6,
+                "req-mayuscula": /[A-Z]/.test(pass),
+                "req-numero":    /[0-9]/.test(pass),
+                "req-especial":  /[@#$!%*?&]/.test(pass)
+            };
+
+            for (const [id, cumple] of Object.entries(reglas)) {
+                const el = document.getElementById(id);
+                const icono = el.querySelector("i");
+                if (cumple) {
+                    el.className = "requisito cumple";
+                    icono.className = "fas fa-check-circle";
+                } else {
+                    el.className = "requisito falla";
+                    icono.className = "fas fa-times-circle";
+                }
+            }
+        }
+
+        function contrasenaValida() {
+            const pass = document.getElementById("reg-password").value;
+            return pass.length >= 6 &&
+                   /[A-Z]/.test(pass) &&
+                   /[0-9]/.test(pass) &&
+                   /[@#$!%*?&]/.test(pass);
+        }
+
+        // ── LOGIN ─────────────────────────────────────────────────
+        async function realizarLogin(event) {
+            event.preventDefault();
+            const usuario  = document.getElementById("login-usuario").value.trim();
+            const password = document.getElementById("login-password").value.trim();
+            const btn      = document.getElementById("btn-login");
+
+            if (!usuario || !password) {
+                mostrarMensaje("msg-login", "Por favor completa todos los campos", "error");
                 return;
             }
 
-            usuariosGuardados.push({ nombre, usuario, password });
-            localStorage.setItem("usuariosDb", JSON.stringify(usuariosGuardados));
+            btn.disabled = true;
+            btn.textContent = "Verificando...";
 
-            alert("¡Registro exitoso! Ahora inicia sesión.");
-            document.getElementById("form-registro").reset();
-            mostrarFormulario("caja-login", e);
-        });
+            try {
+                const response = await fetch(API_URL + "/login", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ nombreUsuario: usuario, password: password })
+                });
 
-        // Lógica de LOGIN
-        document.getElementById("form-login").addEventListener("submit", function (e) {
-            e.preventDefault();
-            const usuarioIngresado = document.getElementById("login-usuario").value;
-            const passwordIngresado = document.getElementById("login-password").value;
+                const data = await response.json();
 
-            let usuariosGuardados = JSON.parse(localStorage.getItem("usuariosDb")) || [];
-            const usuarioValido = usuariosGuardados.find(u => u.usuario === usuarioIngresado && u.password === passwordIngresado);
-
-            if (usuarioValido) {
-                window.location.href = "inventario.html";
-            } else {
-                alert("Correo o contraseña incorrectos.");
+                if (response.ok) {
+                    mostrarMensaje("msg-login", `¡Bienvenido, ${data.nombreCompleto}!`, "exito");
+                    sessionStorage.setItem("usuarioActivo", JSON.stringify(data));
+                    setTimeout(() => window.location.href = "inventario.html", 1500);
+                } else {
+                    mostrarMensaje("msg-login", data.error || "Usuario o contraseña incorrectos", "error");
+                }
+            } catch {
+                mostrarMensaje("msg-login", "Error al conectar con el servidor. ¿Está corriendo el backend?", "error");
+            } finally {
+                btn.disabled = false;
+                btn.textContent = "Iniciar Sesión";
             }
-        });
+        }
 
-        // Lógica de RECUPERAR
-        document.getElementById("form-recuperar").addEventListener("submit", function (e) {
-            e.preventDefault();
-            const correoIngresado = document.getElementById("rec-correo").value;
+        // ── REGISTRO ──────────────────────────────────────────────
+        async function realizarRegistro(event) {
+            event.preventDefault();
+            const nombre   = document.getElementById("reg-nombre").value.trim();
+            const usuario  = document.getElementById("reg-usuario").value.trim();
+            const password = document.getElementById("reg-password").value.trim();
+            const btn      = document.getElementById("btn-registro");
 
-            let usuariosGuardados = JSON.parse(localStorage.getItem("usuariosDb")) || [];
-            const usuarioEncontrado = usuariosGuardados.find(u => u.usuario === correoIngresado);
-
-            if (usuarioEncontrado) {
-                alert(`¡Cuenta encontrada!\nTu contraseña es: ${usuarioEncontrado.password}`);
-                document.getElementById("form-recuperar").reset();
-                mostrarFormulario("caja-login", e);
-            } else {
-                alert("No encontramos ninguna cuenta registrada con este correo electrónico.");
+            if (!nombre || !usuario || !password) {
+                mostrarMensaje("msg-registro", "Por favor completa todos los campos", "error");
+                return;
             }
-        });
+
+            // Validar contraseña segura
+            if (!contrasenaValida()) {
+                mostrarMensaje("msg-registro", "La contraseña no cumple los requisitos de seguridad", "error");
+                document.getElementById("requisitos-box").style.display = "block";
+                validarRequisitos();
+                return;
+            }
+
+            btn.disabled = true;
+            btn.textContent = "Registrando...";
+
+            try {
+                const response = await fetch(API_URL + "/registro", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        nombreCompleto: nombre,
+                        nombreUsuario:  usuario,
+                        password:       password,
+                        rol:            "Empleado",
+                        estado:         "Activo"
+                    })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    mostrarMensaje("msg-registro", "¡Cuenta creada exitosamente! Ahora inicia sesión.", "exito");
+                    document.getElementById("form-registro").reset();
+                    document.getElementById("requisitos-box").style.display = "none";
+                    setTimeout(() => mostrarFormulario("caja-login", { preventDefault: () => {} }), 2000);
+                } else {
+                    mostrarMensaje("msg-registro", data.error || "Error al registrar", "error");
+                }
+            } catch {
+                mostrarMensaje("msg-registro", "Error al conectar con el servidor", "error");
+            } finally {
+                btn.disabled = false;
+                btn.textContent = "Registrarme";
+            }
+        }
+
+        // ── RECUPERAR ─────────────────────────────────────────────
+        function recuperarPassword() {
+            const usuario = document.getElementById("rec-usuario").value.trim();
+            if (!usuario) {
+                mostrarMensaje("msg-recuperar", "Ingresa tu usuario", "error");
+                return;
+            }
+            mostrarMensaje("msg-recuperar", "Función próximamente disponible.", "exito");
+            setTimeout(() => mostrarFormulario("caja-login", { preventDefault: () => {} }), 3000);
+        }
     </script>
 </body>
 

@@ -1,69 +1,45 @@
 package com.example.proyecto.dto;
 
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
-
 public class ProductoDTO {
     private Long id;
-
-    @NotBlank(message = "El nombre del producto no puede estar vacío")
     private String nombre;
-
-    @NotBlank(message = "El tipo de producto es obligatorio")
-    private String tipo;
-
-    @NotNull(message = "El precio es obligatorio")
-    @Positive(message = "El precio debe ser mayor a cero")
+    private String deporte;
+    private String categoria;
+    private String marca;
     private Double precio;
+    private Integer stock;
 
-    @NotNull(message = "La cantidad es obligatoria")
-    @Min(value = 0, message = "La cantidad no puede ser negativa")
-    private Integer cantidad;
+    public ProductoDTO() {}
 
-    // Constructor vacío (necesario para JSON)
-    public ProductoDTO() {
+    public ProductoDTO(Long id, String nombre, String deporte, String categoria, String marca, Double precio, Integer stock) {
+        this.id = id;
+        this.nombre = nombre;
+        this.deporte = deporte;
+        this.categoria = categoria;
+        this.marca = marca;
+        this.precio = precio;
+        this.stock = stock;
     }
 
     // Getters y Setters
-    public Long getId() {
-        return id;
-    }
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+    public String getNombre() { return nombre; }
+    public void setNombre(String nombre) { this.nombre = nombre; }
 
-    public String getNombre() {
-        return nombre;
-    }
+    public String getDeporte() { return deporte; }
+    public void setDeporte(String deporte) { this.deporte = deporte; }
 
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
-    }
+    public String getCategoria() { return categoria; }
+    public void setCategoria(String categoria) { this.categoria = categoria; }
 
-    public String getTipo() {
-        return tipo;
-    }
+    public String getMarca() { return marca; }
+    public void setMarca(String marca) { this.marca = marca; }
 
-    public void setTipo(String tipo) {
-        this.tipo = tipo;
-    }
+    public Double getPrecio() { return precio; }
+    public void setPrecio(Double precio) { this.precio = precio; }
 
-    public Double getPrecio() {
-        return precio;
-    }
-
-    public void setPrecio(Double precio) {
-        this.precio = precio;
-    }
-
-    public Integer getCantidad() {
-        return cantidad;
-    }
-
-    public void setCantidad(Integer cantidad) {
-        this.cantidad = cantidad;
-    }
+    public Integer getStock() { return stock; }
+    public void setStock(Integer stock) { this.stock = stock; }
 }

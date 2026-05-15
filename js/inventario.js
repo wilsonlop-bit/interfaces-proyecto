@@ -1,160 +1,203 @@
-// 1. Definimos los 3 productos "quemados" (por defecto)
-const productosPorDefecto = [
-    { id: "1001", nombre: "Balón Mikasa V200W", deporte: "Voleibol", categoria: "Balones", marca: "Mikasa", precio: 85.00, stock: 15 },
-    { id: "1002", nombre: "Zapatillas Asics Gel-Rocket", deporte: "Voleibol", categoria: "Calzado", marca: "Asics", precio: 120.00, stock: 8 },
-    { id: "1003", nombre: "Rodilleras Mizuno T10", deporte: "Voleibol", categoria: "Accesorios", marca: "Mizuno", precio: 25.50, stock: 30 }
-];
+// =============================================
+//  SPORTSTOCK - inventario.js (Conectado a API)
+// =============================================
 
-// 2. Cargar desde LocalStorage o usar los quemados si está vacío
-let productos = JSON.parse(localStorage.getItem('sportstock_productos'));
+const API_URL_PRODUCTOS = "http://localhost:8080/api/productos";
+let productos = [];
+let productoEditando = null;
 
-if (!productos || productos.length === 0) {
-    productos = productosPorDefecto;
-    localStorage.setItem('sportstock_productos', JSON.stringify(productos));
-}
-
-
+// Referencias al DOM
 const modal = document.getElementById('modalProducto');
 const formProducto = document.getElementById('formProducto');
 const tablaProductos = document.getElementById('tabla-productos');
 const textoMostrando = document.getElementById('texto-mostrando');
-const modalTitulo = document.getElementById('modalTitulo');
 
+// ── CARGAR PRODUCTOS DESDE API ─────────────────────────
+async function cargarProductosAPI() {
+    try {
+        const response = await fetch(API_URL_PRODUCTOS);
+        
+        if (!response.ok) {
+            throw new Error(`Error ${response.status}: No se pudieron cargar los productos`);
+        }
 
-function abrirModal() {
-    modal.style.display = 'flex';
-    formProducto.reset();
-    document.getElementById('productoId').value = '';
-    modalTitulo.textContent = 'Agregar Nuevo Producto';
-}
+        productos = await response.json();
+        renderizarTabla();
 
-
-function editarProducto(id) {
-
-    const producto = productos.find(p => p.id === id);
-
-    if (producto) {
-        document.getElementById('productoId').value = producto.id;
-        document.getElementById('nombre').value = producto.nombre;
-        document.getElementById('deporte').value = producto.deporte;
-        document.getElementById('categoria').value = producto.categoria;
-        document.getElementById('marca').value = producto.marca;
-        document.getElementById('precio').value = producto.precio;
-        document.getElementById('stock').value = producto.stock;
-
-        // Cambiamos el título del modal
-        modalTitulo.textContent = 'Editar Producto';
-
-        // Mostramos el modal
-        modal.style.display = 'flex';
+    } catch (error) {
+        console.error("Error al cargar productos:", error);
+        mostrarError("No se pudo conectar con el servidor. Verifica que Java esté corriendo en localhost:8080");
     }
 }
 
-// Función para cerrar el modal
+// ── MOSTRAR ERROR ───────────────────────────────────────
+function mostrarError(mensaje) {
+    tablaProductos.innerHTML = `
+        <tr>
+            <td colspan="7" style="text-align: center; padding: 40px; color: #ef4444;">
+                <i class="fas fa-exclamation-circle" style="font-size: 30px; margin-bottom: 10px; display: block;"></i>
+                <strong>${mensaje}</strong>
+            </td>
+        </tr>
+    `;
+    textoMostrando.textContent = "Error al cargar productos";
+}
+
+// ── MODAL ───────────────────────────────────────────────
+function abrirModal() {
+    productoEditando = null;
+    formProducto.reset();
+    document.getElementById('productoId').value = '';
+    document.getElementById('modalTitulo').textContent = 'Agregar Nuevo Producto';
+    modal.style.display = 'flex';
+}
+
 function cerrarModal() {
     modal.style.display = 'none';
 }
 
-// Evento: Al enviar el formulario (Click en "Guardar Producto")
-formProducto.addEventListener('submit', function (e) {
+// ── EDITAR PRODUCTO ────────────────────────────────────
+function editarProducto(id) {
+    const p = productos.find(p => p.id === id);
+    if (!p) return;
+
+    productoEditando = id;
+    document.getElementById('productoId').value = p.id;
+    document.getElementById('nombre').value = p.nombre;
+    document.getElementById('deporte').value = p.deporte;
+    document.getElementById('categoria').value = p.categoria;
+    document.getElementById('marca').value = p.marca;
+    document.getElementById('precio').value = p.precio;
+    document.getElementById('stock').value = p.stock;
+    document.getElementById('modalTitulo').textContent = 'Editar Producto';
+    modal.style.display = 'flex';
+}
+
+// ── GUARDAR PRODUCTO (CREAR O EDITAR) ──────────────────
+formProducto.addEventListener('submit', async function(e) {
     e.preventDefault();
 
+    const id = document.getElementById('productoId').value;
+    const nombre = document.getElementById('nombre').value.trim();
+    const deporte = document.getElementById('deporte').value.trim();
+    const categoria = document.getElementById('categoria').value;
+    const marca = document.getElementById('marca').value.trim();
+    const precio = parseFloat(document.getElementById('precio').value);
+    const stock = parseInt(document.getElementById('stock').value);
+
+    if (!nombre || !deporte || !categoria || !marca || !precio || stock === '') {
+        alert("Por favor completa todos los campos");
+        return;
+    }
+
+    const datosProducto = {
+        nombre: nombre,
+        deporte: deporte,
+        categoria: categoria,
+        marca: marca,
+        precio: precio,
+        stock: stock
+    };
+
     try {
-        // 1. Buscamos los elementos en el HTML
-        const inputId = document.getElementById('productoId');
-        const inputNombre = document.getElementById('nombre');
-        const inputDeporte = document.getElementById('deporte');
-        const inputCategoria = document.getElementById('categoria');
-        const inputMarca = document.getElementById('marca');
-        const inputPrecio = document.getElementById('precio');
-        const inputStock = document.getElementById('stock'); // ¡Ojo aquí!
+        let response;
 
-        // 2. Verificamos si falta algún ID en tu HTML
-        let idsFaltantes = [];
-        if (!inputId) idsFaltantes.push("productoId (Asegúrate de tener un input oculto)");
-        if (!inputNombre) idsFaltantes.push("nombre");
-        if (!inputDeporte) idsFaltantes.push("deporte");
-        if (!inputCategoria) idsFaltantes.push("categoria");
-        if (!inputMarca) idsFaltantes.push("marca");
-        if (!inputPrecio) idsFaltantes.push("precio");
-        if (!inputStock) idsFaltantes.push("stock");
-
-        if (idsFaltantes.length > 0) {
-            alert("⚠️ Error en tu HTML. Faltan estos IDs: \n" + idsFaltantes.join("\n"));
-            return;
-        }
-
-        // 3. Capturar los valores (ahora es seguro)
-        const idActual = inputId.value;
-        const nombre = inputNombre.value;
-        const deporte = inputDeporte.value;
-        const categoria = inputCategoria.value;
-        const marca = inputMarca.value;
-        const precio = parseFloat(inputPrecio.value) || 0;
-        const stock = parseInt(inputStock.value) || 0;
-
-        if (idActual) {
-            // Editando
-            const index = productos.findIndex(p => p.id === idActual);
-            if (index !== -1) {
-                productos[index] = { id: idActual, nombre, deporte, categoria, marca, precio, stock };
-            }
+        if (id) {
+            // EDITAR
+            response = await fetch(`${API_URL_PRODUCTOS}/${id}`, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(datosProducto)
+            });
         } else {
-            // Creando nuevo
-            const nuevoId = Date.now().toString();
-            const nuevoProducto = { id: nuevoId, nombre, deporte, categoria, marca, precio, stock };
-            productos.push(nuevoProducto);
+            // CREAR
+            response = await fetch(API_URL_PRODUCTOS, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(datosProducto)
+            });
         }
 
-        // Guardar y refrescar
-        localStorage.setItem('sportstock_productos', JSON.stringify(productos));
+        if (!response.ok) {
+            throw new Error("Error al guardar el producto");
+        }
+
         cerrarModal();
-        renderizarTabla();
+        cargarProductosAPI(); // Recargar tabla
+        alert(id ? "Producto actualizado correctamente" : "Producto creado correctamente");
 
     } catch (error) {
-        console.error("Error al procesar el producto:", error);
-        alert('Hubo un error interno: ' + error.message);
+        console.error("Error:", error);
+        alert("Error al guardar el producto: " + error.message);
     }
 });
 
-// Función para dibujar la tabla
-function renderizarTabla() {
-    tablaProductos.innerHTML = '';
+// ── ELIMINAR PRODUCTO ──────────────────────────────────
+async function eliminarProducto(id) {
+    if (!confirm('¿Estás seguro de que deseas eliminar este producto?')) return;
 
-    productos.forEach(prod => {
-        const tr = document.createElement('tr');
+    try {
+        const response = await fetch(`${API_URL_PRODUCTOS}/${id}`, {
+            method: "DELETE"
+        });
 
-        tr.innerHTML = `
-            <td>${prod.nombre}</td>
-            <td>${prod.deporte}</td>
-            <td>${prod.categoria}</td>
-            <td>${prod.marca}</td>
-            <td>$${prod.precio.toFixed(2)}</td>
-            <td>${prod.stock}</td>
-            <td>
-            <button class="btn-action edit" onclick="editarProducto('${prod.id}')">
-                <i class="fas fa-edit"></i> Editar
-            </button>
-            <button class="btn-action delete" onclick="eliminarProducto('${prod.id}')">
-                <i class="fas fa-trash"></i> Borrar
-            </button>
-        </td>
-        `;
-        tablaProductos.appendChild(tr);
-    });
+        if (!response.ok) {
+            throw new Error("Error al eliminar el producto");
+        }
 
-    // Actualizar el contador
-    textoMostrando.textContent = `Mostrando ${productos.length} producto(s)`;
-}
+        cargarProductosAPI(); // Recargar tabla
+        alert("Producto eliminado correctamente");
 
-// Función para eliminar un producto
-function eliminarProducto(id) {
-    if (confirm('¿Estás seguro de que deseas eliminar este producto?')) {
-        productos = productos.filter(p => p.id !== id);
-        localStorage.setItem('sportstock_productos', JSON.stringify(productos));
-        renderizarTabla();
+    } catch (error) {
+        console.error("Error:", error);
+        alert("Error al eliminar el producto: " + error.message);
     }
 }
 
-// Cuando la página cargue, dibujamos la tabla
-document.addEventListener('DOMContentLoaded', renderizarTabla);
+// ── RENDERIZAR TABLA ───────────────────────────────────
+function renderizarTabla() {
+    if (productos.length === 0) {
+        tablaProductos.innerHTML = `
+            <tr>
+                <td colspan="7" style="text-align: center; padding: 40px; color: #94a3b8;">
+                    <i class="fas fa-inbox" style="font-size: 30px; margin-bottom: 10px; display: block;"></i>
+                    No hay productos que mostrar
+                </td>
+            </tr>
+        `;
+        textoMostrando.textContent = "Mostrando 0 productos";
+        return;
+    }
+
+    tablaProductos.innerHTML = productos.map(p => {
+        const stock = p.stock || p.cantidad || 0;  // Compatibilidad con ambos nombres
+        const stockClass = stock < 10 ? "verylow" : "high";
+        const precio = p.precio || 0;
+
+        return `
+        <tr>
+            <td>${p.nombre || 'N/A'}</td>
+            <td>${p.deporte || 'N/A'}</td>
+            <td>${p.categoria || 'N/A'}</td>
+            <td>${p.marca || 'N/A'}</td>
+            <td>$${Number(precio).toLocaleString('es-CO', {minimumFractionDigits: 2})}</td>
+            <td><span class="stock ${stockClass}">${stock}</span></td>
+            <td>
+                <button class="btn-action edit" onclick="editarProducto(${p.id})">
+                    <i class="fas fa-edit"></i> Editar
+                </button>
+                <button class="btn-action delete" onclick="eliminarProducto(${p.id})">
+                    <i class="fas fa-trash"></i> Eliminar
+                </button>
+            </td>
+        </tr>`;
+    }).join('');
+
+    textoMostrando.textContent = `Mostrando ${productos.length} producto(s)`;
+}
+
+// ── INICIALIZAR CUANDO LA PÁGINA CARGA ─────────────────
+document.addEventListener('DOMContentLoaded', () => {
+    cargarProductosAPI();
+});
+
