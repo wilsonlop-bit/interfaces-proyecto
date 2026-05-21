@@ -1,43 +1,25 @@
 // =============================================
-//  SPORTSTOCK - dashboard.js (Conectado a API)
+//  SPORTSTOCK - dashboard.js
 // =============================================
 
 const API_URL_PRODUCTOS = "http://localhost:8080/api/productos";
-const API_URL_USUARIOS = "http://localhost:8080/api/usuarios";
 
 document.addEventListener('DOMContentLoaded', () => {
-    // Fecha dinámica
-    const fechaEl = document.getElementById('dash-fecha');
-    if (fechaEl) {
-        fechaEl.textContent = new Date().toLocaleDateString('es-CO', {
-            weekday: 'long',
-            day: 'numeric',
-            month: 'long',
-            year: 'numeric'
-        });
-    }
+    // Inicializar header con datos de sesión (nombre, rol, avatar, fecha)
+    inicializarHeader();
 
-    // Cargar datos desde la API
+    // Cargar datos del dashboard
     cargarDatos();
 });
 
 // ── CARGAR TODOS LOS DATOS ─────────────────────────────
 async function cargarDatos() {
     try {
-        // Cargar productos
         const resProductos = await fetch(API_URL_PRODUCTOS);
         if (!resProductos.ok) throw new Error("Error cargando productos");
         const productos = await resProductos.json();
 
-        // Cargar usuarios
-        const resUsuarios = await fetch(API_URL_USUARIOS);
-        if (!resUsuarios.ok) throw new Error("Error cargando usuarios");
-        const usuarios = await resUsuarios.json();
-
-        // Actualizar tarjetas
-        actualizarTarjetas(productos, usuarios);
-
-        // Actualizar paneles
+        actualizarTarjetas(productos);
         actualizarActividadReciente(productos);
         actualizarAlertasStock(productos);
 
@@ -47,27 +29,21 @@ async function cargarDatos() {
     }
 }
 
-// ── ACTUALIZAR TARJETAS SUPERIORES ─────────────────────
-function actualizarTarjetas(productos, usuarios) {
-    const stockMin = 10;
-    const bajosStock = productos.filter(p => (p.stock || p.cantidad || 0) < stockMin).length;
+// ── ACTUALIZAR TARJETAS ────────────────────────────────
+function actualizarTarjetas(productos) {
+    const bajosStock = productos.filter(p => (p.stock || p.cantidad || 0) < 10).length;
     const valorInventario = productos.reduce((suma, p) => {
-        const stock = p.stock || p.cantidad || 0;
-        const precio = p.precio || 0;
-        return suma + (precio * stock);
+        return suma + ((p.precio || 0) * (p.stock || p.cantidad || 0));
     }, 0);
 
-    // Total productos
     const elTotal = document.getElementById('dash-total-productos');
     if (elTotal) elTotal.textContent = productos.length;
 
-    // Stock bajo
     const elBajos = document.getElementById('dash-bajos-stock');
     if (elBajos) elBajos.textContent = bajosStock;
 
-    // Valor inventario
     const elValor = document.getElementById('dash-valor-total');
-    if (elValor) elValor.textContent = '$ ' + valorInventario.toLocaleString('es-CO', {minimumFractionDigits: 2});
+    if (elValor) elValor.textContent = '$ ' + valorInventario.toLocaleString('es-CO', { minimumFractionDigits: 2 });
 }
 
 // ── ACTIVIDAD RECIENTE ─────────────────────────────────
@@ -80,13 +56,13 @@ function actualizarActividadReciente(productos) {
         return;
     }
 
-    // Mostrar los últimos 5 productos
     contenedor.innerHTML = [...productos].reverse().slice(0, 5).map(p => `
-        <div style="display:flex; justify-content:space-between; align-items:center; 
+        <div style="display:flex; justify-content:space-between; align-items:center;
                     padding:12px 0; border-bottom:1px solid #f1f5f9;">
             <div style="display:flex; align-items:center; gap:15px;">
-                <div style="background:#eef2ff; color:#4f46e5; width:40px; height:40px; 
-                            display:flex; justify-content:center; align-items:center; border-radius:8px; flex-shrink:0;">
+                <div style="background:#eef2ff; color:#4f46e5; width:40px; height:40px;
+                            display:flex; justify-content:center; align-items:center;
+                            border-radius:8px; flex-shrink:0;">
                     <i class="fas fa-box"></i>
                 </div>
                 <div>
@@ -116,13 +92,13 @@ function actualizarAlertasStock(productos) {
     contenedor.innerHTML = bajosStock.map(p => {
         const stock = p.stock || p.cantidad || 0;
         return `
-        <div style="display:flex; justify-content:space-between; align-items:center; 
+        <div style="display:flex; justify-content:space-between; align-items:center;
                     background:#fff1f2; padding:10px; border-radius:8px; margin-bottom:8px;">
-            <div style="flex: 1;">
+            <div style="flex:1;">
                 <h4 style="margin:0; font-size:13px; color:#1e293b;">${p.nombre}</h4>
                 <p style="margin:2px 0 0 0; font-size:11px; color:#64748b;">${p.marca || p.deporte || 'Sin marca'}</p>
             </div>
-            <span style="background:#ef4444; color:white; padding:4px 10px; 
+            <span style="background:#ef4444; color:white; padding:4px 10px;
                          border-radius:10px; font-size:11px; font-weight:bold; white-space:nowrap; margin-left:10px;">
                 ${stock} un.
             </span>
@@ -130,15 +106,12 @@ function actualizarAlertasStock(productos) {
     }).join('');
 }
 
-// ── MOSTRAR ERROR EN DASHBOARD ─────────────────────────
+// ── ERROR ──────────────────────────────────────────────
 function mostrarErrorDashboard() {
-    const elTotal = document.getElementById('dash-total-productos');
-    const elBajos = document.getElementById('dash-bajos-stock');
-    const elValor = document.getElementById('dash-valor-total');
-
-    if (elTotal) elTotal.textContent = '—';
-    if (elBajos) elBajos.textContent = '—';
-    if (elValor) elValor.textContent = '—';
+    ['dash-total-productos', 'dash-bajos-stock', 'dash-valor-total'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.textContent = '—';
+    });
 
     const contenedorActividad = document.getElementById('dash-actividad-reciente');
     if (contenedorActividad) {
@@ -147,17 +120,6 @@ function mostrarErrorDashboard() {
                 <i class="fas fa-exclamation-circle" style="font-size:24px; margin-bottom:10px; display:block;"></i>
                 <p><strong>Error de conexión</strong></p>
                 <p style="font-size:12px; margin:0;">Verifica que Java esté corriendo en localhost:8080</p>
-            </div>
-        `;
-    }
-
-    const contenedorAlertas = document.getElementById('dash-alertas-stock');
-    if (contenedorAlertas) {
-        contenedorAlertas.innerHTML = `
-            <div style="text-align:center; padding:20px; color:#ef4444;">
-                <p style="font-size:12px; margin:0;">No se pudo cargar la información</p>
-            </div>
-        `;
+            </div>`;
     }
 }
-

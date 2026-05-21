@@ -31,8 +31,8 @@
             <nav>
                 <a href="index.html"><i class="fas fa-th-large"></i> Dashboard</a>
                 <a href="inventario.html" class="active"><i class="fas fa-box"></i> Inventario</a>
-                <a href="usuarios.html"><i class="fas fa-users"></i> Usuarios</a>
-                <a href="Reportes.html"><i class="fas fa-file-alt"></i> Reportes</a>
+                <a href="usuarios.html" id="nav-usuarios" style="display:none;"><i class="fas fa-users"></i> Usuarios</a>
+                <a href="Reportes.html" id="nav-reportes"><i class="fas fa-file-alt"></i> Reportes</a>
             </nav>
 
             <div class="sidebar-footer">
@@ -44,8 +44,8 @@
 
             <header class="top-header">
                 <div class="welcome-section">
-                    <h1>Bienvenido, Fredy</h1>
-                    <p id="dash-fecha"></p>
+                    <h1 id="header-saludo">Bienvenido</h1>
+                    <p id="header-fecha"></p>
                 </div>
                 <div class="user-controls">
                     <div class="notification">
@@ -53,13 +53,14 @@
                     </div>
                     <div class="user-profile">
                         <div class="user-info">
-                            <span class="user-name">Fredy Diaz</span>
-                            <span class="user-role">Administrador</span>
+                            <span class="user-name" id="header-nombre"></span>
+                            <span class="user-role" id="header-rol"></span>
                         </div>
-                        <img src="https://ui-avatars.com/api/?name=Fredy+Diaz&background=f59e0b&color=fff" alt="Avatar"
-                            class="avatar">
+                        <img id="header-avatar" src="" alt="Avatar" class="avatar">
                     </div>
-                    <a href="login.html" class="btn-logout-top"><i class="fas fa-sign-out-alt"></i> Salir</a>
+                    <button onclick="cerrarSesion()" class="btn-logout-top">
+                        <i class="fas fa-sign-out-alt"></i> Salir
+                    </button>
                 </div>
             </header>
 
@@ -166,11 +167,12 @@
                 </table>
 
                 <p id="texto-mostrando">Mostrando 0 productos</p>
-
             </div>
 
         </main>
     </div>
+
+    <script src="../js/sesion.js"></script>
     <script src="../js/inventario.js"></script>
 </body>
 

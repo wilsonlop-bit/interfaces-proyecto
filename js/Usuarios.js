@@ -1,214 +1,174 @@
 // =============================================
-//  SPORTSTOCK MANAGER - Usuarios.js
+//  SPORTSTOCK - inventario.js
 // =============================================
 
-const API_URL = "http://localhost:8080/api/usuarios";
-let usuarios = [];
-let esAdmin = false;
+const API_URL_PRODUCTOS = "http://localhost:8080/api/productos";
+let productos = [];
+let productoEditando = null;
+
+const modal = document.getElementById('modalProducto');
+const formProducto = document.getElementById('formProducto');
+const tablaProductos = document.getElementById('tabla-productos');
+const textoMostrando = document.getElementById('texto-mostrando');
 
 document.addEventListener('DOMContentLoaded', () => {
-    cargarSesion();
-    cargarFecha();
-    cargarUsuarios();
+    // Verificar sesión e inicializar header (nombre, rol, avatar)
+    inicializarHeader();
 
-    document.getElementById("formUsuario").addEventListener("submit", guardar);
-    document.getElementById("buscador-usuarios").addEventListener("input", () => {
-        renderizarTabla(document.getElementById("buscador-usuarios").value.toLowerCase().trim());
-    });
+    // Si es Empleado: ocultar botón "Nuevo Producto"
+    if (!esAdmin()) {
+        const btnNuevo = document.querySelector(".btn-add");
+        if (btnNuevo) btnNuevo.style.display = "none";
+    }
+
+    cargarProductosAPI();
 });
 
-// ── SESIÓN Y PERMISOS ────────────────────────────────────
-function cargarSesion() {
-    const sesion = JSON.parse(sessionStorage.getItem("usuarioActivo") || "null");
-    if (!sesion) {
-        window.location.href = "login.html";
-        return;
-    }
-
-    esAdmin = sesion.rol === "Administrador";
-
-    // Header dinámico
-    const iniciales = sesion.nombreCompleto.split(" ").slice(0, 2).map(p => p[0]).join("").toUpperCase();
-    document.getElementById("sesion-nombre").textContent  = sesion.nombreCompleto;
-    document.getElementById("sesion-rol").textContent     = sesion.rol;
-    document.getElementById("sesion-avatar").textContent  = iniciales;
-    document.getElementById("saludo-nombre").textContent  = sesion.nombreCompleto.split(" ")[0];
-
-    // Mostrar/ocultar elementos según rol
-    if (esAdmin) {
-        document.getElementById("btn-crear-usuario").style.display = "flex";
-        document.getElementById("th-acciones").style.display       = "table-cell";
-    } else {
-        document.getElementById("alert-empleado").style.display = "block";
-    }
-}
-
-// ── FECHA ────────────────────────────────────────────────
-function cargarFecha() {
-    const fechaEl = document.getElementById("usuarios-fecha");
-    if (fechaEl) {
-        fechaEl.textContent = new Date().toLocaleDateString("es-CO", {
-            weekday: "long", day: "numeric", month: "long", year: "numeric"
-        });
-    }
-}
-
-// ── CARGAR USUARIOS ──────────────────────────────────────
-async function cargarUsuarios() {
+// ── CARGAR PRODUCTOS ───────────────────────────────────
+async function cargarProductosAPI() {
     try {
-        const res = await fetch(API_URL);
-        if (!res.ok) throw new Error();
-        usuarios = await res.json();
+        const response = await fetch(API_URL_PRODUCTOS);
+        if (!response.ok) throw new Error(`Error ${response.status}`);
+        productos = await response.json();
         renderizarTabla();
-    } catch {
-        document.getElementById("tabla-usuarios").innerHTML = `
-            <tr>
-                <td colspan="4" style="text-align:center; padding:40px; color:#ef4444;">
-                    <i class="fas fa-exclamation-circle" style="font-size:24px; display:block; margin-bottom:8px;"></i>
-                    No se pudo conectar con el servidor Java
-                </td>
-            </tr>`;
-        document.getElementById("texto-mostrando-usuarios").textContent = "Error al cargar";
+    } catch (error) {
+        console.error("Error al cargar productos:", error);
+        mostrarError("No se pudo conectar con el servidor. Verifica que Java esté corriendo en localhost:8080");
     }
 }
 
-// ── RENDERIZAR TABLA ─────────────────────────────────────
-function renderizarTabla(filtro = "") {
-    const tbody   = document.getElementById("tabla-usuarios");
-    const textoEl = document.getElementById("texto-mostrando-usuarios");
-
-    const lista = filtro
-        ? usuarios.filter(u =>
-            u.nombreCompleto.toLowerCase().includes(filtro) ||
-            u.nombreUsuario.toLowerCase().includes(filtro))
-        : usuarios;
-
-    if (lista.length === 0) {
-        tbody.innerHTML = `
-            <tr>
-                <td colspan="4" style="text-align:center; padding:40px; color:#94a3b8;">
-                    No hay usuarios que mostrar
-                </td>
-            </tr>`;
-        textoEl.textContent = "Mostrando 0 usuarios";
-        return;
-    }
-
-    tbody.innerHTML = lista.map(u => {
-        const claseRol    = u.rol    === "Administrador" ? "role-admin"    : "role-employee";
-        const claseEstado = u.estado === "Activo"        ? "status-active" : "status-inactive";
-        const rolIcono    = u.rol    === "Administrador"
-            ? '<i class="fas fa-shield-alt" style="margin-right:5px;"></i>'
-            : '<i class="far fa-circle"     style="margin-right:5px;"></i>';
-        const iniciales   = u.nombreCompleto.split(" ").slice(0, 2).map(p => p[0]).join("").toUpperCase();
-
-        // Columna acciones: solo si es admin
-        const colAcciones = esAdmin ? `
-            <td>
-                <button class="btn-action edit"   onclick="editarUsuario(${u.id})">
-                    <i class="fas fa-edit"></i> Editar
-                </button>
-                <button class="btn-action delete" onclick="eliminarUsuario(${u.id})">
-                    <i class="fas fa-trash"></i> Eliminar
-                </button>
-            </td>` : `<td style="display:none;"></td>`;
-
-        return `
+function mostrarError(mensaje) {
+    tablaProductos.innerHTML = `
         <tr>
-            <td>
-                <div style="display:flex; align-items:center; gap:12px;">
-                    <div style="width:36px; height:36px; border-radius:50%; background:#f59e0b;
-                                color:white; display:flex; align-items:center; justify-content:center;
-                                font-weight:700; font-size:13px; flex-shrink:0;">
-                        ${iniciales}
-                    </div>
-                    <div>
-                        <div style="font-weight:500;">${u.nombreCompleto}</div>
-                        <div style="font-size:12px; color:#94a3b8;">${u.nombreUsuario}</div>
-                    </div>
-                </div>
+            <td colspan="7" style="text-align:center; padding:40px; color:#ef4444;">
+                <i class="fas fa-exclamation-circle" style="font-size:30px; margin-bottom:10px; display:block;"></i>
+                <strong>${mensaje}</strong>
             </td>
-            <td><span class="badge ${claseRol}">${rolIcono}${u.rol}</span></td>
-            <td><span class="badge ${claseEstado}">${u.estado}</span></td>
-            ${colAcciones}
         </tr>`;
-    }).join("");
-
-    textoEl.textContent = `Mostrando ${lista.length} de ${usuarios.length} usuarios`;
+    textoMostrando.textContent = "Error al cargar productos";
 }
 
-// ── MODAL ─────────────────────────────────────────────────
+// ── MODAL ───────────────────────────────────────────────
 function abrirModal() {
-    if (!esAdmin) return;
-    document.getElementById("formUsuario").reset();
-    document.getElementById("usuarioId").value = "";
-    document.getElementById("modalTituloUsuario").textContent = "Crear Usuario";
-    document.getElementById("modalUsuario").style.display = "flex";
+    if (!esAdmin()) { alert("No tienes permisos para agregar productos."); return; }
+    productoEditando = null;
+    formProducto.reset();
+    document.getElementById('productoId').value = '';
+    document.getElementById('modalTitulo').textContent = 'Agregar Nuevo Producto';
+    modal.style.display = 'flex';
 }
 
 function cerrarModal() {
-    document.getElementById("modalUsuario").style.display = "none";
+    modal.style.display = 'none';
 }
 
-// ── EDITAR ────────────────────────────────────────────────
-function editarUsuario(id) {
-    if (!esAdmin) return;
-    const u = usuarios.find(u => u.id === id);
-    if (!u) return;
+// ── EDITAR ──────────────────────────────────────────────
+function editarProducto(id) {
+    if (!esAdmin()) { alert("No tienes permisos para editar productos."); return; }
+    const p = productos.find(p => p.id === id);
+    if (!p) return;
 
-    document.getElementById("usuarioId").value = u.id;
-    document.getElementById("uNombre").value   = u.nombreCompleto;
-    document.getElementById("uCorreo").value   = u.nombreUsuario;
-    document.getElementById("uRol").value      = u.rol;
-    document.getElementById("uEstado").value   = u.estado;
-    document.getElementById("modalTituloUsuario").textContent = "Editar Usuario";
-    document.getElementById("modalUsuario").style.display = "flex";
+    productoEditando = id;
+    document.getElementById('productoId').value = p.id;
+    document.getElementById('nombre').value = p.nombre;
+    document.getElementById('deporte').value = p.deporte;
+    document.getElementById('categoria').value = p.categoria;
+    document.getElementById('marca').value = p.marca;
+    document.getElementById('precio').value = p.precio;
+    document.getElementById('stock').value = p.stock;
+    document.getElementById('modalTitulo').textContent = 'Editar Producto';
+    modal.style.display = 'flex';
 }
 
-// ── GUARDAR ───────────────────────────────────────────────
-async function guardar(e) {
+// ── GUARDAR ─────────────────────────────────────────────
+formProducto.addEventListener('submit', async function (e) {
     e.preventDefault();
-    if (!esAdmin) return;
+    if (!esAdmin()) { alert("No tienes permisos para esta acción."); return; }
 
-    const id     = document.getElementById("usuarioId").value;
-    const nombre = document.getElementById("uNombre").value.trim();
-    const correo = document.getElementById("uCorreo").value.trim();
-    const rol    = document.getElementById("uRol").value;
-    const estado = document.getElementById("uEstado").value;
+    const id = document.getElementById('productoId').value;
+    const datosProducto = {
+        nombre: document.getElementById('nombre').value.trim(),
+        deporte: document.getElementById('deporte').value.trim(),
+        categoria: document.getElementById('categoria').value,
+        marca: document.getElementById('marca').value.trim(),
+        precio: parseFloat(document.getElementById('precio').value),
+        stock: parseInt(document.getElementById('stock').value)
+    };
 
-    if (!nombre || !correo) {
-        alert("Por favor completa todos los campos");
+    try {
+        const url = id ? `${API_URL_PRODUCTOS}/${id}` : API_URL_PRODUCTOS;
+        const method = id ? "PUT" : "POST";
+        const response = await fetch(url, {
+            method,
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(datosProducto)
+        });
+        if (!response.ok) throw new Error("Error al guardar");
+        cerrarModal();
+        cargarProductosAPI();
+        alert(id ? "Producto actualizado correctamente" : "Producto creado correctamente");
+    } catch (error) {
+        alert("Error al guardar el producto: " + error.message);
+    }
+});
+
+// ── ELIMINAR ────────────────────────────────────────────
+async function eliminarProducto(id) {
+    if (!esAdmin()) { alert("No tienes permisos para eliminar productos."); return; }
+    if (!confirm('¿Estás seguro de que deseas eliminar este producto?')) return;
+    try {
+        const response = await fetch(`${API_URL_PRODUCTOS}/${id}`, { method: "DELETE" });
+        if (!response.ok) throw new Error("Error al eliminar");
+        cargarProductosAPI();
+        alert("Producto eliminado correctamente");
+    } catch (error) {
+        alert("Error al eliminar el producto: " + error.message);
+    }
+}
+
+// ── RENDERIZAR TABLA ───────────────────────────────────
+function renderizarTabla() {
+    if (productos.length === 0) {
+        tablaProductos.innerHTML = `
+            <tr>
+                <td colspan="7" style="text-align:center; padding:40px; color:#94a3b8;">
+                    <i class="fas fa-inbox" style="font-size:30px; margin-bottom:10px; display:block;"></i>
+                    No hay productos que mostrar
+                </td>
+            </tr>`;
+        textoMostrando.textContent = "Mostrando 0 productos";
         return;
     }
 
-    try {
-        const res = await fetch(id ? `${API_URL}/${id}` : API_URL, {
-            method: id ? "PUT" : "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ nombreCompleto: nombre, nombreUsuario: correo, rol, estado })
-        });
+    const admin = esAdmin();
 
-        if (!res.ok) throw new Error();
-        cerrarModal();
-        cargarUsuarios();
-        alert(id ? "Usuario actualizado correctamente" : "Usuario creado correctamente");
+    tablaProductos.innerHTML = productos.map(p => {
+        const stock = p.stock || p.cantidad || 0;
+        const stockClass = stock < 10 ? "verylow" : "high";
+        const precio = p.precio || 0;
 
-    } catch {
-        alert("Error al guardar el usuario");
-    }
-}
+        const acciones = admin
+            ? `<button class="btn-action edit" onclick="editarProducto(${p.id})">
+                   <i class="fas fa-edit"></i> Editar
+               </button>
+               <button class="btn-action delete" onclick="eliminarProducto(${p.id})">
+                   <i class="fas fa-trash"></i> Eliminar
+               </button>`
+            : `<span style="color:#94a3b8; font-size:13px;">
+                   <i class="fas fa-lock"></i> Solo lectura
+               </span>`;
 
-// ── ELIMINAR ──────────────────────────────────────────────
-async function eliminarUsuario(id) {
-    if (!esAdmin) return;
-    if (!confirm("¿Seguro que deseas eliminar este usuario?")) return;
+        return `
+        <tr>
+            <td>${p.nombre || 'N/A'}</td>
+            <td>${p.deporte || 'N/A'}</td>
+            <td>${p.categoria || 'N/A'}</td>
+            <td>${p.marca || 'N/A'}</td>
+            <td>$${Number(precio).toLocaleString('es-CO', { minimumFractionDigits: 2 })}</td>
+            <td><span class="stock ${stockClass}">${stock}</span></td>
+            <td>${acciones}</td>
+        </tr>`;
+    }).join('');
 
-    try {
-        const res = await fetch(`${API_URL}/${id}`, { method: "DELETE" });
-        if (!res.ok) throw new Error();
-        cargarUsuarios();
-        alert("Usuario eliminado correctamente");
-    } catch {
-        alert("Error al eliminar el usuario");
-    }
+    textoMostrando.textContent = `Mostrando ${productos.length} producto(s)`;
 }

@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum_scalable=1.0, minimum-scalable=1.0">
     <meta http-equiv="X-UA-compatible" content="IE=Edge">
     <meta name="author" content="Fredy Santiago">
     <title>Reportes - SportStock Manager</title>
@@ -14,7 +14,7 @@
 <body>
     <div class="container">
 
-        <aside class="sidebar dark-sidebar">
+        <aside class="sidebar">
             <div class="logo">
                 <i class="fas fa-dumbbell logo-icon"></i>
                 <div>
@@ -25,7 +25,7 @@
             <nav>
                 <a href="index.html"><i class="fas fa-th-large"></i> Dashboard</a>
                 <a href="inventario.html"><i class="fas fa-box"></i> Inventario</a>
-                <a href="usuarios.html"><i class="fas fa-users"></i> Usuarios</a>
+                <a href="usuarios.html" id="nav-usuarios" style="display:none;"><i class="fas fa-users"></i> Usuarios</a>
                 <a href="Reportes.html" class="active"><i class="fas fa-file-alt"></i> Reportes</a>
             </nav>
             <div class="sidebar-footer">
@@ -38,8 +38,8 @@
 
             <header class="top-header">
                 <div class="welcome-section">
-                    <h1>Bienvenido, <span id="saludo-nombre">...</span></h1>
-                    <p id="reportes-fecha"></p>
+                    <h1 id="header-saludo">Bienvenido</h1>
+                    <p id="header-fecha"></p>
                     <p style="font-size:13px; color:#94a3b8; margin-top:4px;">Genera y descarga reportes del sistema</p>
                 </div>
                 <div class="user-controls">
@@ -48,21 +48,17 @@
                     </div>
                     <div class="user-profile">
                         <div class="user-info">
-                            <span class="user-name" id="sesion-nombre">Cargando...</span>
-                            <span class="user-role" id="sesion-rol"></span>
+                            <span class="user-name" id="header-nombre"></span>
+                            <span class="user-role" id="header-rol"></span>
                         </div>
-                        <div id="sesion-avatar"
-                            style="width:38px; height:38px; border-radius:50%; background:#f59e0b;
-                                   color:white; display:flex; align-items:center; justify-content:center;
-                                   font-weight:700; font-size:14px;">?</div>
+                        <img id="header-avatar" src="" alt="Avatar" class="avatar">
                     </div>
-                    <a href="login.html" onclick="cerrarSesion(event)" class="btn-logout-top">
+                    <button onclick="cerrarSesion()" class="btn-logout-top">
                         <i class="fas fa-sign-out-alt"></i> Salir
-                    </a>
+                    </button>
                 </div>
             </header>
 
-            <!-- Tarjetas de reportes -->
             <div class="reportes-grid">
 
                 <div class="reporte-card">
@@ -91,7 +87,7 @@
 
                 <div class="reporte-card">
                     <div class="reporte-card-icon icon-red">
-                        <i class="fas fa-exclamation-triangle"></i>
+                        <i class="fas fa-calendar-times"></i>
                     </div>
                     <h3>Reporte de Stock Bajo</h3>
                     <p>Productos que requieren reabastecimiento</p>
@@ -104,17 +100,12 @@
             </div>
 
            
+        </main>
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
-    <script src="../js/reportes.js"></script>
-    <script>
-        function cerrarSesion(e) {
-            e.preventDefault();
-            sessionStorage.removeItem("usuarioActivo");
-            window.location.href = "login.html";
-        }
-    </script>
+    <script src="../js/sesion.js"></script>
+    <script src="../js/Reportes.js"></script>
 </body>
 </html>

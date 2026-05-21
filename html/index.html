@@ -27,8 +27,9 @@
             <nav>
                 <a href="index.html" class="active"><i class="fas fa-th-large"></i> Dashboard</a>
                 <a href="inventario.html"><i class="fas fa-box"></i> Inventario</a>
-                <a href="usuarios.html"><i class="fas fa-users"></i> Usuarios</a>
-                <a href="Reportes.html"><i class="fas fa-file-alt"></i> Reportes</a>
+                <!-- Solo aparece si es Administrador -->
+                <a href="usuarios.html" id="nav-usuarios" style="display:none;"><i class="fas fa-users"></i> Usuarios</a>
+                <a href="Reportes.html" id="nav-reportes"><i class="fas fa-file-alt"></i> Reportes</a>
             </nav>
 
             <div class="sidebar-footer">
@@ -41,7 +42,8 @@
 
             <header class="top-header">
                 <div class="welcome-section">
-                    <h1>Bienvenido, Fredy</h1>
+                    <!-- Se rellena dinámicamente con sesion.js -->
+                    <h1 id="header-saludo">Bienvenido</h1>
                     <p id="dash-fecha"></p>
                 </div>
 
@@ -51,13 +53,17 @@
                     </div>
                     <div class="user-profile">
                         <div class="user-info">
-                            <span class="user-name">Fredy Diaz</span>
-                            <span class="user-role">Administrador</span>
+                            <!-- Se rellena dinámicamente con sesion.js -->
+                            <span class="user-name" id="header-nombre"></span>
+                            <span class="user-role" id="header-rol"></span>
                         </div>
-                        <img src="https://ui-avatars.com/api/?name=Fredy+Diaz&background=f59e0b&color=fff" alt="Perfil"
-                            class="avatar">
+                        <!-- Avatar generado automáticamente según el usuario -->
+                        <img id="header-avatar" src="" alt="Perfil" class="avatar">
                     </div>
-                    <a href="login.html" class="btn-logout-top"><i class="fas fa-sign-out-alt"></i> Salir</a>
+                    <!-- Salir llama a cerrarSesion() de sesion.js -->
+                    <button onclick="cerrarSesion()" class="btn-logout-top">
+                        <i class="fas fa-sign-out-alt"></i> Salir
+                    </button>
                 </div>
             </header>
 
@@ -118,6 +124,8 @@
         </main>
     </div>
 
+    <!-- sesion.js PRIMERO: verifica sesión, rellena header y expone cerrarSesion() -->
+    <script src="../js/sesion.js"></script>
     <script src="../js/dashboard.js"></script>
 </body>
 
