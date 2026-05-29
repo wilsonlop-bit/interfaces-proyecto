@@ -1,0 +1,17 @@
+[ {
+  "id" : 2,
+  "nombre" : "Zapatillas Asics Gel-Rocket",
+  "deporte" : "Voleibol",
+  "categoria" : "Calzado",
+  "marca" : "Asics",
+  "precio" : 120.0,
+  "stock" : 8
+}, {
+  "id" : 3,
+  "nombre" : "Rodilleras Mizuno T10",
+  "deporte" : "Voleibol",
+  "categoria" : "Accesorios",
+  "marca" : "Mizuno",
+  "precio" : 25.5,
+  "stock" : 30
+} ]

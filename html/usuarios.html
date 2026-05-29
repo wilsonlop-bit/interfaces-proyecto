@@ -3,7 +3,8 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum_scalable=1.0, minimum-scalable=1.0">
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, user-scalable=no, maximum_scalable=1.0, minimum-scalable=1.0">
     <meta http-equiv="X-UA-compatible" content="IE=Edge">
     <meta name="author" content="Fredy Santiago">
     <title>Usuarios - SportStock Manager</title>
@@ -40,7 +41,8 @@
                 <div class="welcome-section">
                     <h1 id="header-saludo">Bienvenido</h1>
                     <p id="header-fecha"></p>
-                    <p style="font-size:13px; color:#94a3b8; margin-top:4px;">Administra el equipo de SportStock Manager</p>
+                    <p style="font-size:13px; color:#94a3b8; margin-top:4px;">Administra el equipo de SportStock Manager
+                    </p>
                 </div>
                 <div class="user-controls">
                     <div class="notification">
@@ -76,8 +78,7 @@
                 <table>
                     <thead>
                         <tr>
-                            <th>Usuario</th>
-                            <th>Correo Electrónico</th>
+                            <th>Usuario</th>    
                             <th>Rol</th>
                             <th>Estado</th>
                             <th>Acciones</th>
@@ -103,10 +104,19 @@
                     <label>Nombre completo</label>
                     <input type="text" id="uNombre" placeholder="Ej: Ana Rodríguez" required>
                 </div>
+
+                <!-- CAMPO CORREGIDO: nombreUsuario en lugar de correo -->
                 <div class="form-group">
-                    <label>Correo electrónico</label>
-                    <input type="email" id="uCorreo" placeholder="Ej: ana@sportstock.com" required>
+                    <label>Nombre de usuario</label>
+                    <input type="text" id="uUsuario" placeholder="Ej: ana.rodriguez" required>
                 </div>
+
+                <!-- CAMPO NUEVO: contraseña -->
+                <div class="form-group" id="campo-password">
+                    <label>Contraseña <span style="color:#94a3b8; font-weight:400;"></span></label>
+                    <input type="password" id="uPassword" placeholder="Mínimo 6 caracteres" minlength="6">
+                </div>
+
                 <div class="form-group">
                     <label>Rol</label>
                     <select id="uRol" class="filter-select" style="width:100%;">
@@ -114,6 +124,7 @@
                         <option value="Empleado">Empleado</option>
                     </select>
                 </div>
+
                 <div class="form-group">
                     <label>Estado</label>
                     <select id="uEstado" class="filter-select" style="width:100%;">
@@ -133,4 +144,5 @@
     <script src="../js/sesion.js"></script>
     <script src="../js/Usuarios.js"></script>
 </body>
+
 </html>

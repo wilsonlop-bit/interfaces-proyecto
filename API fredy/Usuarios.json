@@ -1,0 +1,15 @@
+[ {
+  "id" : 2,
+  "nombreCompleto" : "Pepa pig",
+  "nombreUsuario" : "Pepa",
+  "password" : "qwerty00",
+  "rol" : "Administrador",
+  "estado" : "Activo"
+}, {
+  "id" : 3,
+  "nombreCompleto" : "Samuel Ruiz",
+  "nombreUsuario" : "Samu",
+  "password" : "qwerty00",
+  "rol" : "Administrador",
+  "estado" : "Activo"
+} ]
